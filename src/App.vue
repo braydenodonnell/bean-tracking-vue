@@ -1,9 +1,9 @@
 <script setup>
-import { ref } from 'vue'
-
-const name = ref('Brayden')
+import Home from './components/home.vue'
 </script>
 
 <template>
-  <div class="text-blue-300">Hello there {{ name }}</div>
+  <div class="flex flex-col items-center mt-8">
+    <Home />
+  </div>
 </template>
