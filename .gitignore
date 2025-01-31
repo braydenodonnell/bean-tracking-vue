@@ -1,0 +1,7 @@
+# Temporary directories.
+
+/dist
+/bundle
+/bundles
+/node_modules
+/.parcel-cache
