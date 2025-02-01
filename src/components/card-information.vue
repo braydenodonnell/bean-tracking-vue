@@ -5,16 +5,24 @@ import {
   SparklesIcon,
   FireIcon,
 } from '@heroicons/vue/24/outline';
+
+import CardModal from './card-modal.vue';
+import { ref } from 'vue';
+
+const { brand, name } = defineProps(['brand', 'name']);
+
+const showModal = ref(false);
 </script>
 
 <template>
   <div
     class="bg-neutral-100 cursor-pointer border border-neutral-200 rounded-lg shadow-md p-6 max-w-96 h-[420px] relative transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
+    @click="showModal = true"
   >
     <div class="flex flex-col space-y-4">
       <div class="space-y-2">
-        <h2 class="text-2xl font-bold capitalize">brand</h2>
-        <p class="text-xl capitalize">name</p>
+        <h2 class="text-2xl font-bold capitalize">{{ brand }}</h2>
+        <p class="text-xl capitalize">{{ name }}</p>
         <p class="text-sm">roast date</p>
       </div>
 
@@ -74,4 +82,15 @@ import {
       </div>
     </div>
   </div>
+
+  <!-- Probably won't need to use slots to pass the data needed for the modal -->
+  <Teleport to="body">
+    <CardModal
+      :show="showModal"
+      @close="showModal = false"
+      :brand="brand"
+      :name="name"
+    >
+    </CardModal>
+  </Teleport>
 </template>

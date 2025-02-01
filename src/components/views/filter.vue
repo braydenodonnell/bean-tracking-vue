@@ -19,10 +19,11 @@ const setFavorite = (tab) => (active.value = tab);
     <button
       v-for="tab in tabs"
       :key="tab.id"
-      class="bg-neutral-100 border-2 px-4 py-1 rounded-full cursor-pointer transition-all duration-300 hover:bg-neutral-200"
+      class="bg-neutral-100 border-2 px-4 py-1 rounded-full cursor-pointer transition-all duration-300"
       :class="{
         'border-blue-400 scale-105': active === tab.id,
         'border-neutral-300': active !== tab.id,
+        'hover:bg-neutral-200': active !== tab.id,
       }"
       @click="setFavorite(tab.id)"
     >
