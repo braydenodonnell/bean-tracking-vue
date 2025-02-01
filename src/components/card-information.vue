@@ -17,6 +17,7 @@ const showModal = ref(false);
 <template>
   <div
     class="bg-neutral-100 cursor-pointer border border-neutral-200 rounded-lg shadow-md p-6 max-w-96 h-[420px] relative transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
+    :class="{ '-translate-y-1': showModal }"
     @click="showModal = true"
   >
     <div class="flex flex-col space-y-4">

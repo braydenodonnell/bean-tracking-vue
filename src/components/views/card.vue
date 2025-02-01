@@ -25,7 +25,7 @@ const data = ref([
 
 <template>
   <div
-    class="grid grid-cols-1 gap-12"
+    class="grid grid-cols-1 gap-12 mb-16"
     :class="{
       'grid-cols-3': data.length >= 3,
       'grid-cols-2': data.length === 2,

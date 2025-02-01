@@ -1,4 +1,6 @@
 <script setup>
+import { XMarkIcon } from '@heroicons/vue/24/outline';
+
 const props = defineProps({
   show: Boolean,
   brand: String,
@@ -6,19 +8,25 @@ const props = defineProps({
 });
 </script>
 
-<!-- Probably won't need to use slots -->
 <template>
   <Transition name="modal">
     <div
       v-if="show"
       @click="$emit('close')"
-      class="fixed z-50 top-0 left-0 w-full h-full bg-black/50 flex transition-opacity duration-300 ease"
+      class="fixed inset-0 z-50 top-0 left-0 w-full h-full bg-black/50 flex transition-opacity duration-300 ease"
     >
       <div
         @click.stop
-        class="w-1/4 m-auto p-6 bg-neutral-100 rounded-lg shadow-md transition-all duration-300 ease"
+        class="w-1/4 m-auto p-6 bg-neutral-100 rounded-lg shadow-md transition-all duration-300 ease relative"
       >
-        <div class="space-y-2 flex flex-col items-center">
+        <div class="space-y-2 flex flex-col items-center relative">
+          <button
+            class="absolute -top-3 -right-3 cursor-pointer hover:bg-neutral-200 hover:rounded-full h-8 w-8 flex justify-center items-center"
+            @click="$emit('close')"
+          >
+            <XMarkIcon class="size-6 text-stone-500" />
+          </button>
+
           <h2 class="text-2xl font-bold capitalize">{{ brand }}</h2>
           <p class="text-xl capitalize">{{ name }}</p>
           <p class="text-sm">Date</p>
@@ -52,7 +60,20 @@ const props = defineProps({
             </p>
           </div>
         </div>
-        <!-- <button @click="$emit('close')">OK</button> -->
+
+        <div className="mt-10 flex justify-between">
+          <button
+            className="px-4 py-2 rounded-lg text-lg bg-red-500 text-neutral-50 font-medium w-28 h-12 text-center shadow-md cursor-pointer hover:shadow-none hover:bg-red-600 transition duration-200"
+          >
+            Remove
+          </button>
+
+          <button
+            className="px-4 py-2 rounded-lg text-lg bg-green-500 text-neutral-50 font-medium w-28 h-12 text-center shadow-md cursor-pointer hover:shadow-none hover:bg-green-600 transition duration-200"
+          >
+            Edit
+          </button>
+        </div>
       </div>
     </div>
   </Transition>

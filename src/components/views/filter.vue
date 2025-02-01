@@ -15,7 +15,7 @@ const setFavorite = (tab) => (active.value = tab);
 </script>
 
 <template>
-  <nav class="flex gap-4">
+  <nav class="flex gap-4 mt-16">
     <button
       v-for="tab in tabs"
       :key="tab.id"
