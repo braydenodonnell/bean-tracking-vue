@@ -102,6 +102,7 @@ const props = defineProps({
   transition: all 0.3s ease;
 } */
 
+/* 
 .modal-header h3 {
   margin-top: 0;
   color: #42b983;
@@ -114,6 +115,7 @@ const props = defineProps({
 .modal-default-button {
   float: right;
 }
+*/
 
 /*
  * The following styles are auto-applied to elements with
