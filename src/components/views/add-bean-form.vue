@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
   show: Boolean,
@@ -74,6 +74,31 @@ const handleSubmit = () => {
     // $emit('submit', beanData)
   }
 };
+
+watch(
+  () => props.show,
+  (newVal) => {
+    if (newVal) {
+      beanData.value = {
+        brand: '',
+        coffeeName: '',
+        roastDate: '',
+        startingWeight: '',
+        roastLevel: '',
+        process: '',
+        flavorNotes: '',
+        origin: '',
+        grindSetting: '',
+        brewMethod: '',
+        personalNotes: '',
+      };
+
+      errors.value = {};
+
+      submitted.value = false;
+    }
+  }
+);
 </script>
 
 <template>
