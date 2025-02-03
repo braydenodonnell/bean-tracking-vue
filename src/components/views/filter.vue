@@ -9,7 +9,7 @@ const tabs = ref([
   { id: 'favorite', label: 'Favroite' },
 ]);
 
-const setFavorite = (tab) => (active.value = tab);
+const handleTab = (tab) => (active.value = tab);
 
 // eventually, use watch to fetch data depending on which tab is active
 </script>
@@ -25,7 +25,7 @@ const setFavorite = (tab) => (active.value = tab);
         'border-neutral-300': active !== tab.id,
         'hover:bg-neutral-200': active !== tab.id,
       }"
-      @click="setFavorite(tab.id)"
+      @click="handleTab(tab.id)"
     >
       {{ tab.label }}
     </button>

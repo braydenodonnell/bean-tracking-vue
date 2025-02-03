@@ -1,9 +1,13 @@
 <script setup>
 import { ref, watch } from 'vue';
 
+import { supabase } from '../../lib/supabase-client';
+
 const props = defineProps({
   show: Boolean,
 });
+
+const emit = defineEmits(['close', 'submit']);
 
 const beanData = ref({
   brand: '',
@@ -65,13 +69,36 @@ const validateForm = () => {
   return Object.keys(errors.value).length === 0;
 };
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (validateForm()) {
     submitted.value = true;
-    console.log('Form submitted:', beanData);
 
-    // You can emit an event here with the form data
-    // $emit('submit', beanData)
+    const { error } = await supabase.from('coffee_beans').insert([
+      {
+        brand: beanData.value.brand,
+        name: beanData.value.coffeeName,
+        roast_date: beanData.value.roastDate,
+        total_weight: beanData.value.startingWeight,
+        roast_level: beanData.value.roastLevel,
+        process: beanData.value.process,
+        flavor_notes: beanData.value.flavorNotes,
+        origin: beanData.value.origin,
+        grind: beanData.value.grindSetting,
+        brew_method: beanData.value.brewMethod,
+        personal_notes: beanData.value.personalNotes,
+      },
+    ]);
+
+    if (error) {
+      console.error('Error inserting data: ', error);
+    } else {
+      console.log('Data insertting successfully!');
+
+      // Close form
+      emit('close');
+
+      // Display a toast message with confirmation
+    }
   }
 };
 

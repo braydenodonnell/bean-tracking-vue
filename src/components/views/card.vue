@@ -1,42 +1,34 @@
 <script setup>
-const props = defineProps(['brand', 'name']);
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import CardInformation from '../card-information.vue';
 
-const data = ref([
-  {
-    brand: 'aldea',
-    name: 'espresso blend',
-  },
-  {
-    brand: 'coffee bros',
-    name: 'brazil ip',
-  },
-  {
-    brand: 'aldea',
-    name: 'decaf',
-  },
-  {
-    brand: 'coffee bros',
-    name: 'Araku',
-  },
-]);
+import { supabase } from '../../lib/supabase-client';
+
+const beanData = ref([]);
+
+async function fetchData() {
+  const { data, error } = await supabase.from('coffee_beans').select();
+  beanData.value = data;
+}
+
+onMounted(() => {
+  fetchData();
+});
 </script>
 
 <template>
   <div
-    class="grid grid-cols-1 gap-12 mb-16"
+    class="grid grid-cols-1 gap-12 mb-16 sm:grid-cols-2"
     :class="{
-      'grid-cols-3': data.length >= 3,
-      'grid-cols-2': data.length === 2,
+      'lg:grid-cols-3': beanData.length >= 3,
+      'lg:grid-cols-2': beanData.length === 2,
     }"
   >
     <!-- Loop over data to display cards -->
     <CardInformation
-      v-for="coffee in data"
-      :key="coffee.name"
-      :brand="coffee.brand"
-      :name="coffee.name"
+      v-for="coffee in beanData"
+      :key="coffee.id"
+      :data="coffee"
     />
   </div>
 </template>

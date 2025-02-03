@@ -9,22 +9,31 @@ import {
 import CardModal from './card-modal.vue';
 import { ref } from 'vue';
 
-const { brand, name } = defineProps(['brand', 'name']);
+const { data } = defineProps(['data']);
+
+console.log(data.roast_date.split('-'));
+const formatDate = (date) => {
+  const year = date.split('-')[0];
+  const month = date.split('-')[1];
+  const day = date.split('-')[2];
+
+  return `${month}/${day}/${year}`;
+};
 
 const showModal = ref(false);
 </script>
 
 <template>
   <div
-    class="bg-neutral-100 cursor-pointer border border-neutral-200 rounded-lg shadow-md p-6 max-w-96 h-[420px] relative transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
+    class="bg-neutral-100 cursor-pointer border border-neutral-200 rounded-lg shadow-md p-6 w-80 h-[420px] relative transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
     :class="{ '-translate-y-1': showModal }"
     @click="showModal = true"
   >
     <div class="flex flex-col space-y-4">
       <div class="space-y-2">
-        <h2 class="text-2xl font-bold capitalize">{{ brand }}</h2>
-        <p class="text-xl capitalize">{{ name }}</p>
-        <p class="text-sm">roast date</p>
+        <h2 class="text-2xl font-semibold capitalize">{{ data.brand }}</h2>
+        <p class="text-xl capitalize">{{ data.name }}</p>
+        <p class="text-sm">{{ formatDate(data.roast_date) }}</p>
       </div>
 
       <div>
@@ -32,7 +41,7 @@ const showModal = ref(false);
           class="flex justify-between items-end border-t border-neutral-200 pt-4"
         >
           <h2 class="text-md leading-none">Beans Remaining:</h2>
-          <p class="text-xs leading-none">100g / 100g</p>
+          <p class="text-xs leading-none">100g / {{ data.total_weight }}g</p>
         </div>
 
         <div class="w-full h-3 bg-neutral-700 rounded-lg mt-1">
@@ -42,14 +51,14 @@ const showModal = ref(false);
       </div>
 
       <div
-        class="grid grid-cols-6 gap-x-8 gap-y-6 border-t border-neutral-200 pt-4"
+        class="grid grid-cols-6 gap-x-3 gap-y-6 border-t border-neutral-200 pt-4"
       >
         <div class="space-y-1 col-span-3">
           <div class="flex items-center gap-1">
             <FireIcon class="size-5 text-neutral-700" />
             <h3 class="font-semibold text-neutral-700">Roast</h3>
           </div>
-          <p class="text-neutral-600 caapitalize">Medium</p>
+          <p class="text-neutral-600 caapitalize">{{ data.roast_level }}</p>
         </div>
 
         <div class="space-y-1 col-span-3">
@@ -57,19 +66,19 @@ const showModal = ref(false);
             <ArrowsRightLeftIcon class="size-5 text-neutral-700" />
             <h3 class="font-semibold text-neutral-700">Process</h3>
           </div>
-          <p class="text-neutral-600 caapitalize">Washed</p>
+          <p class="text-neutral-600 caapitalize">{{ data.process }}</p>
         </div>
 
         <div class="space-y-1 col-span-3">
           <div class="flex items-center gap-1">
             <SparklesIcon class="size-5 text-neutral-700" />
-            <h3 class="font-semibold text-neutral-700">Flavor Notes</h3>
+            <h3 class="font-semibold text-neutral-700">Notes</h3>
           </div>
 
           <ul class="text-neutral-600">
-            <li>Brown Sugar</li>
-            <li>Caramel</li>
-            <li>Cocoa</li>
+            <li v-for="note in data.flavor_notes.split(',')" class="capitalize">
+              {{ note }}
+            </li>
           </ul>
         </div>
 
@@ -78,20 +87,17 @@ const showModal = ref(false);
             <GlobeAmericasIcon class="size-5 text-neutral-700" />
             <h3 class="font-semibold text-neutral-700">Origin</h3>
           </div>
-          <p class="text-neutral-600 caapitalize">Kenya</p>
+          <ul class="text-neutral-600">
+            <li v-for="origin in data.origin.split(',')" class="capitalize">
+              {{ origin }}
+            </li>
+          </ul>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Probably won't need to use slots to pass the data needed for the modal -->
   <Teleport to="body">
-    <CardModal
-      :show="showModal"
-      @close="showModal = false"
-      :brand="brand"
-      :name="name"
-    >
-    </CardModal>
+    <CardModal :show="showModal" @close="showModal = false"></CardModal>
   </Teleport>
 </template>
