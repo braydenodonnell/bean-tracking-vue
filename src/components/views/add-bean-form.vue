@@ -39,7 +39,41 @@ const brewMethods = [
   'Other',
 ];
 
-const handleSubmit = () => {};
+const submitted = ref(false);
+
+const errors = ref({});
+
+const validateForm = () => {
+  errors.value = {};
+  const requiredFields = [
+    'brand',
+    'coffeeName',
+    'roastDate',
+    'startingWeight',
+    'flavorNotes',
+    'origin',
+    'roastLevel',
+    'process',
+  ];
+
+  requiredFields.forEach((field) => {
+    if (!beanData.value[field]) {
+      errors.value[field] = 'This field is required';
+    }
+  });
+
+  return Object.keys(errors.value).length === 0;
+};
+
+const handleSubmit = () => {
+  if (validateForm()) {
+    submitted.value = true;
+    console.log('Form submitted:', beanData);
+
+    // You can emit an event here with the form data
+    // $emit('submit', beanData)
+  }
+};
 </script>
 
 <template>
@@ -47,14 +81,14 @@ const handleSubmit = () => {};
     <div
       v-if="show"
       @click="$emit('close')"
-      class="fixed inset-0 bg-black/50 z-50 flex justify-end items-center cursor-default transition-opacity duration-300 ease"
+      class="fixed overflow-hidden inset-0 bg-black/50 z-50 flex justify-end items-center cursor-default transition-opacity duration-300 ease"
     >
       <div
         @click.stop
-        class="bg-neutral-100 border border-neutral-200 h-screen rounded-lg shadow-md p-8 w-[40rem] overflow-y-auto cursor-default overscroll-contain"
+        class="bg-neutral-100 border border-neutral-200 h-screen rounded-lg shadow-md p-8 w-[40rem] overflow-y-scroll cursor-default overscroll-contain"
       >
-        <form @submit.prevent="console.log(beanData)">
-          <div class="grid grid-cols-2 gap-x-12 gap-y-8">
+        <form @submit.prevent="handleSubmit">
+          <div class="flex flex-col gap-6">
             <div>
               <label class="text-md font-medium mb-1 text-neutral-700"
                 >Brand *</label
@@ -62,8 +96,12 @@ const handleSubmit = () => {};
               <input
                 type="text"
                 class="w-full px-3 py-2 border-2 border-neutral-300 bg-neutral-200 rounded-lg text-neutral-600"
+                :class="{ 'border-red-500': errors.brand }"
                 v-model="beanData.brand"
               />
+              <p v-if="errors.brand" class="text-red-500 text-sm mt-1">
+                {{ errors.brand }}
+              </p>
             </div>
 
             <div>
@@ -73,8 +111,12 @@ const handleSubmit = () => {};
               <input
                 type="text"
                 class="w-full px-3 py-2 border-2 border-neutral-300 bg-neutral-200 rounded-lg text-neutral-600"
+                :class="{ 'border-red-500': errors.coffeeName }"
                 v-model="beanData.coffeeName"
               />
+              <p v-if="errors.coffeeName" class="text-red-500 text-sm mt-1">
+                {{ errors.coffeeName }}
+              </p>
             </div>
 
             <div>
@@ -85,8 +127,12 @@ const handleSubmit = () => {};
                 type="date"
                 :max="maxDate"
                 class="w-full px-3 py-2 border-2 border-neutral-300 bg-neutral-200 rounded-lg text-neutral-600"
+                :class="{ 'border-red-500': errors.roastDate }"
                 v-model="beanData.roastDate"
               />
+              <p v-if="errors.roastDate" class="text-red-500 text-sm mt-1">
+                {{ errors.roastDate }}
+              </p>
             </div>
 
             <div>
@@ -97,8 +143,12 @@ const handleSubmit = () => {};
                 type="number"
                 min="0"
                 class="w-full px-3 py-2 border-2 border-neutral-300 bg-neutral-200 rounded-lg text-neutral-600"
+                :class="{ 'border-red-500': errors.startingWeight }"
                 v-model="beanData.startingWeight"
               />
+              <p v-if="errors.startingWeight" class="text-red-500 text-sm mt-1">
+                {{ errors.startingWeight }}
+              </p>
             </div>
 
             <div>
@@ -108,6 +158,7 @@ const handleSubmit = () => {};
               <select
                 v-model="beanData.roastLevel"
                 class="w-full px-3 py-2 border-2 border-neutral-300 bg-neutral-200 rounded-lg text-neutral-600 h-11"
+                :class="{ 'border-red-500': errors.roastLevel }"
               >
                 <option value="" selected disabled hidden>
                   Select roast level
@@ -120,6 +171,9 @@ const handleSubmit = () => {};
                   {{ roast }}
                 </option>
               </select>
+              <p v-if="errors.roastLevel" class="text-red-500 text-sm mt-1">
+                {{ errors.roastLevel }}
+              </p>
             </div>
 
             <div>
@@ -129,6 +183,7 @@ const handleSubmit = () => {};
               <select
                 v-model="beanData.process"
                 class="w-full px-3 py-2 border-2 border-neutral-300 bg-neutral-200 rounded-lg text-neutral-600 h-11"
+                :class="{ 'border-red-500': errors.process }"
               >
                 <option value="" selected disabled hidden>
                   Select process
@@ -141,6 +196,9 @@ const handleSubmit = () => {};
                   {{ process }}
                 </option>
               </select>
+              <p v-if="errors.process" class="text-red-500 text-sm mt-1">
+                {{ errors.process }}
+              </p>
             </div>
 
             <div>
@@ -150,9 +208,13 @@ const handleSubmit = () => {};
               <input
                 type="text"
                 class="w-full px-3 py-2 border-2 border-neutral-300 bg-neutral-200 rounded-lg text-neutral-600"
+                :class="{ 'border-red-500': errors.flavorNotes }"
                 placeholder="e.g., chocolate, caramel, fruity"
                 v-model="beanData.flavorNotes"
               />
+              <p v-if="errors.flavorNotes" class="text-red-500 text-sm mt-1">
+                {{ errors.flavorNotes }}
+              </p>
             </div>
 
             <div>
@@ -162,8 +224,12 @@ const handleSubmit = () => {};
               <input
                 type="text"
                 class="w-full px-3 py-2 border-2 border-neutral-300 bg-neutral-200 rounded-lg text-neutral-600"
+                :class="{ 'border-red-500': errors.origin }"
                 v-model="beanData.origin"
               />
+              <p v-if="errors.origin" class="text-red-500 text-sm mt-1">
+                {{ errors.origin }}
+              </p>
             </div>
 
             <div>
@@ -227,324 +293,3 @@ const handleSubmit = () => {};
     </div>
   </Transition>
 </template>
-
-<!-- 
-<script setup>
-import { ref, reactive } from 'vue';
-
-const props = defineProps({
-  show: {
-    type: Boolean,
-    required: true,
-  },
-});
-
-defineEmits(['close']);
-
-const formData = reactive({
-  brand: '',
-  coffeeName: '',
-  roastDate: '',
-  startingWeight: '',
-  flavorNotes: '',
-  origin: '',
-  roastLevel: '',
-  process: '',
-  grindSetting: '',
-  brewMethod: '',
-  personalNotes: '',
-});
-
-const errors = reactive({});
-const submitted = ref(false);
-
-const roastLevels = ['Light', 'Medium-Light', 'Medium', 'Medium-Dark', 'Dark'];
-const processes = ['Washed', 'Natural', 'Honey', 'Anaerobic', 'Other'];
-const brewMethods = [
-  'Pour Over',
-  'Espresso',
-  'French Press',
-  'AeroPress',
-  'Drip',
-  'Cold Brew',
-  'Other',
-];
-
-const validateForm = () => {
-  const newErrors = {};
-  const requiredFields = [
-    'brand',
-    'coffeeName',
-    'roastDate',
-    'startingWeight',
-    'flavorNotes',
-    'origin',
-    'roastLevel',
-    'process',
-  ];
-
-  requiredFields.forEach((field) => {
-    if (!formData[field]) {
-      newErrors[field] = 'This field is required';
-    }
-  });
-
-  if (formData.roastDate && !isValidDate(formData.roastDate)) {
-    newErrors.roastDate = 'Please enter a valid date';
-  }
-
-  if (formData.startingWeight && isNaN(formData.startingWeight)) {
-    newErrors.startingWeight = 'Please enter a valid number';
-  }
-
-  Object.assign(errors, newErrors);
-  return Object.keys(newErrors).length === 0;
-};
-
-const isValidDate = (dateString) => {
-  const date = new Date(dateString);
-  return date instanceof Date && !isNaN(date);
-};
-
-const handleSubmit = () => {
-  if (validateForm()) {
-    submitted.value = true;
-    console.log('Form submitted:', formData);
-
-    // You can emit an event here with the form data
-    // $emit('submit', formData)
-  }
-};
-</script>
-
-<template>
-  <Transition name="modal">
-    <div
-      v-if="show"
-      @click="$emit('close')"
-      class="fixed inset-0 bg-black/50 z-50 flex justify-end items-center cursor-default transition-opacity duration-300 ease"
-    >
-      <div
-        @click.stop
-        class="bg-white border border-stone-200 rounded-lg shadow-md p-8 w-[40rem] h-full overflow-y-auto cursor-default overscroll-contain"
-      >
-        <h2 class="text-2xl font-semibold mb-6">Coffee Bean Entry</h2>
-
-        <form @submit.prevent="handleSubmit" class="space-y-6">
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium mb-1">Brand *</label>
-              <input
-                v-model="formData.brand"
-                type="text"
-                class="w-full px-3 py-2 border rounded-md"
-                :class="{ 'border-red-500': errors.brand }"
-              />
-              <p v-if="errors.brand" class="text-red-500 text-sm mt-1">
-                {{ errors.brand }}
-              </p>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium mb-1"
-                >Coffee Name *</label
-              >
-              <input
-                v-model="formData.coffeeName"
-                type="text"
-                class="w-full px-3 py-2 border rounded-md"
-                :class="{ 'border-red-500': errors.coffeeName }"
-              />
-              <p v-if="errors.coffeeName" class="text-red-500 text-sm mt-1">
-                {{ errors.coffeeName }}
-              </p>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium mb-1">Roast Date *</label>
-              <input
-                v-model="formData.roastDate"
-                type="date"
-                class="w-full px-3 py-2 border rounded-md"
-                :class="{ 'border-red-500': errors.roastDate }"
-              />
-              <p v-if="errors.roastDate" class="text-red-500 text-sm mt-1">
-                {{ errors.roastDate }}
-              </p>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium mb-1"
-                >Starting Weight (g) *</label
-              >
-              <input
-                v-model="formData.startingWeight"
-                type="number"
-                class="w-full px-3 py-2 border rounded-md"
-                :class="{ 'border-red-500': errors.startingWeight }"
-              />
-              <p v-if="errors.startingWeight" class="text-red-500 text-sm mt-1">
-                {{ errors.startingWeight }}
-              </p>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium mb-1"
-                >Flavor Notes *</label
-              >
-              <input
-                v-model="formData.flavorNotes"
-                type="text"
-                placeholder="e.g., Chocolate, Berry, Nutty"
-                class="w-full px-3 py-2 border rounded-md"
-                :class="{ 'border-red-500': errors.flavorNotes }"
-              />
-              <p v-if="errors.flavorNotes" class="text-red-500 text-sm mt-1">
-                {{ errors.flavorNotes }}
-              </p>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium mb-1">Origin *</label>
-              <input
-                v-model="formData.origin"
-                type="text"
-                class="w-full px-3 py-2 border rounded-md"
-                :class="{ 'border-red-500': errors.origin }"
-              />
-              <p v-if="errors.origin" class="text-red-500 text-sm mt-1">
-                {{ errors.origin }}
-              </p>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium mb-1"
-                >Roast Level *</label
-              >
-              <select
-                v-model="formData.roastLevel"
-                class="w-full px-3 py-2 border rounded-md"
-                :class="{ 'border-red-500': errors.roastLevel }"
-              >
-                <option value="">Select roast level</option>
-                <option
-                  v-for="level in roastLevels"
-                  :key="level"
-                  :value="level.toLowerCase()"
-                >
-                  {{ level }}
-                </option>
-              </select>
-              <p v-if="errors.roastLevel" class="text-red-500 text-sm mt-1">
-                {{ errors.roastLevel }}
-              </p>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium mb-1">Process *</label>
-              <select
-                v-model="formData.process"
-                class="w-full px-3 py-2 border rounded-md"
-                :class="{ 'border-red-500': errors.process }"
-              >
-                <option value="">Select process</option>
-                <option
-                  v-for="process in processes"
-                  :key="process"
-                  :value="process.toLowerCase()"
-                >
-                  {{ process }}
-                </option>
-              </select>
-              <p v-if="errors.process" class="text-red-500 text-sm mt-1">
-                {{ errors.process }}
-              </p>
-            </div>
-          </div>
-
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium mb-1"
-                >Grind Setting (Optional)</label
-              >
-              <input
-                v-model="formData.grindSetting"
-                type="text"
-                placeholder="e.g., Fine, Medium, Coarse"
-                class="w-full px-3 py-2 border rounded-md"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium mb-1"
-                >Brew Method (Optional)</label
-              >
-              <select
-                v-model="formData.brewMethod"
-                class="w-full px-3 py-2 border rounded-md"
-              >
-                <option value="">Select brew method</option>
-                <option
-                  v-for="method in brewMethods"
-                  :key="method"
-                  :value="method.toLowerCase()"
-                >
-                  {{ method }}
-                </option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium mb-1"
-                >Personal Notes (Optional)</label
-              >
-              <textarea
-                v-model="formData.personalNotes"
-                rows="4"
-                placeholder="Add your personal notes, preferences, or brewing tips..."
-                class="w-full px-3 py-2 border rounded-md"
-              ></textarea>
-            </div>
-          </div>
-
-          <div
-            v-if="submitted"
-            class="bg-green-50 border border-green-200 rounded-md p-4"
-          >
-            <p class="text-green-700">
-              Coffee bean information successfully recorded!
-            </p>
-          </div>
-
-          <div class="flex justify-end space-x-4">
-            <button
-              type="button"
-              @click="$emit('close')"
-              class="px-4 py-2 border rounded-md hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              Save Coffee Bean Entry
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </Transition>
-</template>
-
-<style scoped>
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-</style> -->
