@@ -2,6 +2,14 @@
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 
 const { show, data } = defineProps(['show', 'data']);
+
+const formatDate = (date) => {
+  const year = date.split('-')[0];
+  const month = date.split('-')[1];
+  const day = date.split('-')[2];
+
+  return `${month}/${day}/${year}`;
+};
 </script>
 
 <template>
@@ -25,7 +33,7 @@ const { show, data } = defineProps(['show', 'data']);
 
           <h2 class="text-2xl font-bold capitalize">{{ data.brand }}</h2>
           <p class="text-xl capitalize">{{ data.name }}</p>
-          <p class="text-sm">{{ data.roast_date }}</p>
+          <p class="text-sm">{{ formatDate(data.roast_date) }}</p>
         </div>
 
         <div
@@ -72,3 +80,18 @@ const { show, data } = defineProps(['show', 'data']);
     </div>
   </Transition>
 </template>
+
+<style>
+.modal-enter-from {
+  opacity: 0;
+}
+
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  transition: opacity 0.2s ease-in-out;
+}
+</style>

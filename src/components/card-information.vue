@@ -4,26 +4,55 @@ import {
   ArrowsRightLeftIcon,
   SparklesIcon,
   FireIcon,
+  HeartIcon as HeartIconOutline,
 } from '@heroicons/vue/24/outline';
 
-import CardModal from './card-modal.vue';
-import { ref } from 'vue';
+import { HeartIcon as HeartIconSolid } from '@heroicons/vue/24/solid';
 
+import { supabase } from '../lib/supabase-client';
+
+import CardModal from './card-modal.vue';
+
+import { ref } from 'vue';
 const showModal = ref(false);
+const isFavorite = ref(false);
 const { data } = defineProps(['data']);
+
+const formatDate = (date) => {
+  const year = date.split('-')[0];
+  const month = date.split('-')[1];
+  const day = date.split('-')[2];
+
+  return `${month}/${day}/${year}`;
+};
+
+const updateFavorite = async (value, id) => {
+  const { data, error } = await supabase
+    .from('coffee_beans')
+    .update({ favorite: value })
+    .eq('id', id);
+};
+
+const getFavorite = async (id) => {
+  const { data, error } = await supabase
+    .from('coffee_beans')
+    .select('favorite')
+    .eq('id', id);
+
+  return data;
+};
 </script>
 
 <template>
   <div
-    class="bg-neutral-100 cursor-pointer border border-neutral-200 rounded-lg shadow-md p-6 w-80 h-[420px] relative transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
-    :class="{ '-translate-y-1': showModal }"
+    class="bg-neutral-100 fixed cursor-pointer border border-neutral-200 rounded-lg shadow-md p-6 w-80 h-[420px] relative transition-transform duration-300 hover:shadow-lg"
     @click="showModal = true"
   >
     <div class="flex flex-col space-y-4">
       <div class="space-y-2">
         <h2 class="text-2xl font-semibold capitalize">{{ data.brand }}</h2>
         <p class="text-xl capitalize">{{ data.name }}</p>
-        <p class="text-sm">{{ data.roast_date }}</p>
+        <p class="text-sm">{{ formatDate(data.roast_date) }}</p>
       </div>
 
       <div>
@@ -84,6 +113,23 @@ const { data } = defineProps(['data']);
           </ul>
         </div>
       </div>
+    </div>
+
+    <div
+      @click.stop="
+        isFavorite = !isFavorite;
+        updateFavorite(isFavorite, data.id);
+        console.log(getFavorite(data.id));
+      "
+    >
+      <HeartIconSolid
+        class="size-6 text-red-500 absolute top-4 right-4"
+        v-if="isFavorite"
+      />
+      <HeartIconOutline
+        class="size-6 text-red-500 absolute top-4 right-4"
+        v-else
+      />
     </div>
   </div>
 
