@@ -29,6 +29,14 @@ const maxDate = new Date(Date.now() - tzoffset)
   .slice(0, -1)
   .split('T')[0];
 
+const formatDate = (date) => {
+  const year = date.split('-')[0];
+  const month = date.split('-')[1];
+  const day = date.split('-')[2];
+
+  return `${month}/${day}/${year}`;
+};
+
 const roastLevels = ['Light', 'Medium-Light', 'Medium', 'Medium-Dark', 'Dark'];
 
 const processes = ['Washed', 'Natural', 'Honey', 'Wet Hulled', 'Other'];
@@ -77,7 +85,7 @@ const handleSubmit = async () => {
       {
         brand: beanData.value.brand,
         name: beanData.value.coffeeName,
-        roast_date: beanData.value.roastDate,
+        roast_date: formatDate(beanData.value.roastDate),
         total_weight: beanData.value.startingWeight,
         roast_level: beanData.value.roastLevel,
         process: beanData.value.process,
