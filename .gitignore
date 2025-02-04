@@ -1,7 +1,10 @@
 # Temporary directories.
-
 /dist
 /bundle
 /bundles
 /node_modules
 /.parcel-cache
+
+# Private files.
+/.env
+/.env.local
