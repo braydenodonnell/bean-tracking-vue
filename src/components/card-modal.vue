@@ -1,6 +1,8 @@
 <script setup>
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 
+import { supabase } from '../lib/supabase-client';
+
 const { show, data } = defineProps(['show', 'data']);
 
 const formatDate = (date) => {
@@ -9,6 +11,10 @@ const formatDate = (date) => {
   const day = date.split('-')[2];
 
   return `${month}/${day}/${year}`;
+};
+
+const deleteBeanData = async (id) => {
+  const { error } = await supabase.from('coffee_beans').delete().eq('id', id);
 };
 </script>
 
@@ -65,6 +71,7 @@ const formatDate = (date) => {
 
         <div className="mt-10 flex justify-between">
           <button
+            @click="deleteBeanData(data.id)"
             className="px-4 py-2 rounded-lg text-lg bg-red-500 text-neutral-50 font-medium w-28 h-12 text-center shadow-md cursor-pointer hover:shadow-none hover:bg-red-600 transition duration-200"
           >
             Remove

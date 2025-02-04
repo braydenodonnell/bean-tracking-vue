@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import CardInformation from '../card-information.vue';
 
 import { supabase } from '../../lib/supabase-client';
@@ -7,13 +7,25 @@ import { supabase } from '../../lib/supabase-client';
 const beanData = ref([]);
 
 async function fetchData() {
-  const { data, error } = await supabase.from('coffee_beans').select();
+  const { data, error } = await supabase
+    .from('coffee_beans')
+    .select()
+    .order('id');
+
   beanData.value = data;
 }
 
 onMounted(() => {
   fetchData();
 });
+
+watch(beanData, (newBeanData) => {
+  if (newBeanData) {
+    fetchData();
+  }
+});
+
+console.log(beanData);
 </script>
 
 <template>
@@ -22,9 +34,9 @@ onMounted(() => {
     :class="{
       'lg:grid-cols-3': beanData.length >= 3,
       'lg:grid-cols-2': beanData.length === 2,
+      'lg:grid-cols-1': beanData.length === 1,
     }"
   >
-    <!-- Loop over data to display cards -->
     <CardInformation
       v-for="coffee in beanData"
       :key="coffee.id"
