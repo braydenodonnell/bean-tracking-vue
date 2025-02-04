@@ -32,15 +32,6 @@ const updateFavorite = async (value, id) => {
     .update({ favorite: value })
     .eq('id', id);
 };
-
-const getFavorite = async (id) => {
-  const { data, error } = await supabase
-    .from('coffee_beans')
-    .select('favorite')
-    .eq('id', id);
-
-  return data;
-};
 </script>
 
 <template>
@@ -119,7 +110,6 @@ const getFavorite = async (id) => {
       @click.stop="
         isFavorite = !isFavorite;
         updateFavorite(isFavorite, data.id);
-        console.log(getFavorite(data.id));
       "
     >
       <HeartIconSolid

@@ -24,8 +24,6 @@ watch(beanData, (newBeanData) => {
     fetchData();
   }
 });
-
-console.log(beanData);
 </script>
 
 <template>
