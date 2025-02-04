@@ -1,11 +1,7 @@
 <script setup>
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 
-const props = defineProps({
-  show: Boolean,
-  brand: String,
-  name: String,
-});
+const { show, data } = defineProps(['show', 'data']);
 </script>
 
 <template>
@@ -27,9 +23,9 @@ const props = defineProps({
             <XMarkIcon class="size-6 text-stone-500" />
           </button>
 
-          <h2 class="text-2xl font-bold capitalize">{{ brand }}</h2>
-          <p class="text-xl capitalize">{{ name }}</p>
-          <p class="text-sm">Date</p>
+          <h2 class="text-2xl font-bold capitalize">{{ data.brand }}</h2>
+          <p class="text-xl capitalize">{{ data.name }}</p>
+          <p class="text-sm">{{ data.roast_date }}</p>
         </div>
 
         <div
@@ -37,12 +33,12 @@ const props = defineProps({
         >
           <div class="text-center">
             <h3 class="font-semibold text-neutral-700">Grind Setting</h3>
-            <p class="text-neutral-600">15</p>
+            <p class="text-neutral-600">{{ data.grind }}</p>
           </div>
 
           <div class="text-center">
             <h3 class="font-semibold text-neutral-700">Brew Method</h3>
-            <p class="text-neutral-600 capitalize">espresso</p>
+            <p class="text-neutral-600 capitalize">{{ data.brew_method }}</p>
           </div>
         </div>
 
@@ -54,9 +50,7 @@ const props = defineProps({
             class="bg-neutral-200 border border-neutral-300 shadow-sm px-4 py-2 rounded-lg min-h-24 max-h-96 overflow-y-scroll"
           >
             <p class="text-neutral-600 leading-relaxed">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ratione,
-              iure. Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-              Ratione, iure.
+              {{ data.personal_notes }}
             </p>
           </div>
         </div>
@@ -78,65 +72,3 @@ const props = defineProps({
     </div>
   </Transition>
 </template>
-
-<style>
-/* .modal-mask {
-  position: fixed;
-  z-index: 9998;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  transition: opacity 0.3s ease;
-} */
-
-/* .modal-container {
-  width: 300px;
-  margin: auto;
-  padding: 20px 30px;
-  background-color: #fff;
-  border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
-  transition: all 0.3s ease;
-} */
-
-/* 
-.modal-header h3 {
-  margin-top: 0;
-  color: #42b983;
-}
-
-.modal-body {
-  margin: 20px 0;
-}
-
-.modal-default-button {
-  float: right;
-}
-*/
-
-/*
- * The following styles are auto-applied to elements with
- * transition="modal" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the modal transition by editing
- * these styles.
- */
-
-.modal-enter-from {
-  opacity: 0;
-}
-
-.modal-leave-to {
-  opacity: 0;
-}
-
-.modal-enter-from .modal-container,
-.modal-leave-to .modal-container {
-  -webkit-transform: scale(1.1);
-  transform: scale(1.1);
-}
-</style>

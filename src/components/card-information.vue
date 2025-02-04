@@ -9,18 +9,8 @@ import {
 import CardModal from './card-modal.vue';
 import { ref } from 'vue';
 
-const { data } = defineProps(['data']);
-
-console.log(data.roast_date.split('-'));
-const formatDate = (date) => {
-  const year = date.split('-')[0];
-  const month = date.split('-')[1];
-  const day = date.split('-')[2];
-
-  return `${month}/${day}/${year}`;
-};
-
 const showModal = ref(false);
+const { data } = defineProps(['data']);
 </script>
 
 <template>
@@ -33,7 +23,7 @@ const showModal = ref(false);
       <div class="space-y-2">
         <h2 class="text-2xl font-semibold capitalize">{{ data.brand }}</h2>
         <p class="text-xl capitalize">{{ data.name }}</p>
-        <p class="text-sm">{{ formatDate(data.roast_date) }}</p>
+        <p class="text-sm">{{ data.roast_date }}</p>
       </div>
 
       <div>
@@ -98,6 +88,10 @@ const showModal = ref(false);
   </div>
 
   <Teleport to="body">
-    <CardModal :show="showModal" @close="showModal = false"></CardModal>
+    <CardModal
+      :show="showModal"
+      @close="showModal = false"
+      :data="data"
+    ></CardModal>
   </Teleport>
 </template>
