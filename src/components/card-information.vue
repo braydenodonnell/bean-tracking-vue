@@ -72,10 +72,11 @@ watch(
           </p>
         </div>
 
-        <div class="w-full h-3 bg-neutral-700 rounded-lg mt-1">
+        <div class="w-full h-3 bg-neutral-700 rounded-lg mt-1 overflow-hidden">
           <div
-            class="h-3 rounded-lg"
+            class="h-3 rounded-l-lg"
             :class="{
+              'rounded-lg': percentRemaining === 100,
               'bg-green-500': percentRemaining >= 50,
               'bg-yellow-300': percentRemaining >= 20 && percentRemaining < 50,
               'bg-red-500': percentRemaining < 20,

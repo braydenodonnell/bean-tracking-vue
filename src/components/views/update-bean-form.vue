@@ -61,7 +61,7 @@ const validateForm = () => {
   ];
 
   requiredFields.forEach((field) => {
-    if (!beanData.value[field]) {
+    if (!beanData.value[field] && beanData.value.remainingWeight < 0) {
       errors.value[field] = 'This field is required';
     }
   });
@@ -218,9 +218,9 @@ watch(
                 <label class="text-md font-medium mb-1 text-neutral-700"
                   >Remaining Weight (grams) *</label
                 >
+                <!-- min="0" -->
                 <input
                   type="number"
-                  min="0"
                   class="w-full px-3 py-2 border-2 border-neutral-300 bg-neutral-200 rounded-lg text-neutral-600"
                   :class="{ 'border-red-500': errors.remainingWeight }"
                   v-model="beanData.remainingWeight"
