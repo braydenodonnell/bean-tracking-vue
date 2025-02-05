@@ -14,7 +14,7 @@ async function fetchData() {
     const { data, error } = await supabase
       .from('coffee_beans')
       .select()
-      .order('id');
+      .order('time_created', { ascending: false });
 
     return (beanData.value = data);
   }
@@ -24,7 +24,8 @@ async function fetchData() {
     const { data, error } = await supabase
       .from('coffee_beans')
       .select()
-      .gt('total_weight', 100);
+      .gt('total_weight', 100)
+      .order('time_created', { ascending: false });
 
     return (beanData.value = data);
   }
@@ -34,7 +35,8 @@ async function fetchData() {
     const { data, error } = await supabase
       .from('coffee_beans')
       .select()
-      .eq('favorite', 'true');
+      .eq('favorite', 'true')
+      .order('time_created', { ascending: false });
 
     return (beanData.value = data);
   }
@@ -55,20 +57,15 @@ watchEffect(() => {
     .on('postgres_changes', { event: 'DELETE', schema: 'public' }, () => {
       fetchData();
     })
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public' }, () => {
+      fetchData();
+    })
     .subscribe();
 
   return () => {
     supabase.removeChannel(subscriptionInsert);
   };
 });
-
-const handleUpdateFavorite = (id, value) => {
-  // const bean = coffeeBeans.value.find((b) => b.id === id);
-  // if (bean) bean.favorite = value;
-  beanData.value.map((bean) =>
-    bean.id === id ? { ...bean, favorite: value } : bean
-  );
-};
 </script>
 
 <template>
@@ -85,7 +82,6 @@ const handleUpdateFavorite = (id, value) => {
       v-for="coffee in beanData"
       :key="coffee.id"
       :data="coffee"
-      @update-favorite="handleUpdateFavorite"
     />
   </div>
   <div v-else class="text-2xl">Add coffee beans!</div>

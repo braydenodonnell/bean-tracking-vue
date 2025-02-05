@@ -1,7 +1,7 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
-const active = ref('all');
+const active = ref('current');
 
 const emit = defineEmits();
 

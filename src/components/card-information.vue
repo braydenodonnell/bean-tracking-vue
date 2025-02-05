@@ -14,11 +14,11 @@ import { supabase } from '../lib/supabase-client';
 import CardModal from './card-modal.vue';
 
 import { ref } from 'vue';
+
 const showModal = ref(false);
 const showFavorite = ref(data.favorite);
 
 const { data } = defineProps(['data']);
-const emit = defineEmits(['update-favorite']);
 
 const formatDate = (date) => {
   const year = date.split('-')[0];
@@ -116,7 +116,6 @@ const updateFavorite = async (value, id) => {
       @click.stop="
         showFavorite = !showFavorite;
         updateFavorite(showFavorite, data.id);
-        console.log(showFavorite);
       "
     >
       <HeartIconSolid

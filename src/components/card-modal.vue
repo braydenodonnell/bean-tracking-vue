@@ -4,10 +4,12 @@ import { ref } from 'vue';
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 
 import { supabase } from '../lib/supabase-client';
+import UpdateBeanForm from './views/update-bean-form.vue';
 
 const { show, data } = defineProps(['show', 'data']);
 
 const showConfirmDelete = ref(false);
+const showUpdateForm = ref(false);
 
 const formatDate = (date) => {
   const year = date.split('-')[0];
@@ -32,14 +34,19 @@ const deleteBeanData = async (id) => {
     <div
       v-if="show"
       @click="
-        $emit('close');
+        if (!showUpdateForm) $emit('close');
+        showUpdateForm = false;
         showConfirmDelete = false;
       "
       class="fixed inset-0 z-50 top-0 left-0 w-full h-full bg-black/50 flex flex-col gap-6 justify-center items-center transition-opacity duration-300 ease"
     >
       <div
         @click.stop="showConfirmDelete = false"
-        class="w-96 p-6 bg-neutral-100 rounded-lg shadow-md transition-all duration-900 ease"
+        class="w-96 p-6 bg-neutral-100 rounded-lg shadow-md transition-all duration-600 ease"
+        :class="{
+          '-translate-x-3/4': showUpdateForm,
+          '-translate-y-1/4': showConfirmDelete,
+        }"
       >
         <div class="space-y-2 flex flex-col items-center relative">
           <button
@@ -94,7 +101,7 @@ const deleteBeanData = async (id) => {
           </button>
 
           <button
-            @click.stop
+            @click.stop="showUpdateForm = !showUpdateForm"
             class="px-4 py-2 rounded-lg text-lg bg-green-500 text-neutral-50 font-medium w-28 h-12 text-center shadow-md cursor-pointer hover:shadow-none hover:bg-green-600 transition duration-200"
           >
             Edit
@@ -106,27 +113,36 @@ const deleteBeanData = async (id) => {
         <div
           v-if="showConfirmDelete"
           @click.stop
-          class="w-1/5 bg-neutral-100 p-6 rounded-lg flex flex-col items-center gap-3 transition-opacity duration-1000 ease"
+          class="fixed inset-0 z-50 flex justify-center items-center translate-y-1/4 cursor-default transition-opacity duration-900 ease"
         >
-          <h3 class="text-lg text-semibold">
-            Are you sure you want to delete?
-          </h3>
-          <div class="flex gap-3">
-            <button
-              @click="showConfirmDelete = false"
-              class="px-2 py-1 rounded-lg text-md bg-neutral-400 text-neutral-50 font-medium w-20 h-10 text-center shadow-md hover:shadow-none hover:bg-neutral-500 transition duration-200"
-            >
-              Cancel
-            </button>
-            <button
-              @click="deleteBeanData(data.id)"
-              class="px-2 py-1 rounded-lg text-md bg-red-500 text-neutral-50 font-medium w-20 h-10 text-center shadow-md cursor-pointer hover:shadow-none hover:bg-red-600 transition duration-200"
-            >
-              Confirm
-            </button>
+          <div
+            class="w-1/5 bg-neutral-100 p-6 rounded-lg flex flex-col items-center gap-3"
+          >
+            <h3 class="text-lg text-semibold">
+              Are you sure you want to delete?
+            </h3>
+            <div class="flex gap-3">
+              <button
+                @click="showConfirmDelete = false"
+                class="px-2 py-1 rounded-lg text-md bg-neutral-400 text-neutral-50 font-medium w-20 h-10 text-center shadow-md hover:shadow-none hover:bg-neutral-500 transition duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                @click="deleteBeanData(data.id)"
+                class="px-2 py-1 rounded-lg text-md bg-red-500 text-neutral-50 font-medium w-20 h-10 text-center shadow-md cursor-pointer hover:shadow-none hover:bg-red-600 transition duration-200"
+              >
+                Confirm
+              </button>
+            </div>
           </div>
         </div>
       </Transition>
+      <UpdateBeanForm
+        :data="data"
+        :show="showUpdateForm"
+        @close="showUpdateForm = false"
+      ></UpdateBeanForm>
     </div>
   </Transition>
 </template>
