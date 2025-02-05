@@ -1,17 +1,20 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const active = ref('all');
+
+const emit = defineEmits();
 
 const tabs = ref([
   { id: 'all', label: 'All' },
   { id: 'current', label: 'Current' },
-  { id: 'favorite', label: 'Favroite' },
+  { id: 'favorites', label: 'Favroites' },
 ]);
 
-const handleTab = (tab) => (active.value = tab);
-
-// eventually, use watch to fetch data depending on which tab is active
+const handleTab = (tab) => {
+  active.value = tab;
+  emit('update:activeTab', tab);
+};
 </script>
 
 <template>

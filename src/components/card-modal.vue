@@ -19,6 +19,11 @@ const formatDate = (date) => {
 
 const deleteBeanData = async (id) => {
   const { error } = await supabase.from('coffee_beans').delete().eq('id', id);
+
+  if (error) {
+    console.error('Error deleting: ', error);
+    return;
+  }
 };
 </script>
 

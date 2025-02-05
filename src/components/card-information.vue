@@ -15,8 +15,10 @@ import CardModal from './card-modal.vue';
 
 import { ref } from 'vue';
 const showModal = ref(false);
-const isFavorite = ref(false);
+const showFavorite = ref(data.favorite);
+
 const { data } = defineProps(['data']);
+const emit = defineEmits(['update-favorite']);
 
 const formatDate = (date) => {
   const year = date.split('-')[0];
@@ -27,10 +29,14 @@ const formatDate = (date) => {
 };
 
 const updateFavorite = async (value, id) => {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('coffee_beans')
     .update({ favorite: value })
     .eq('id', id);
+
+  if (error) {
+    console.error('Error updating favorite: ', error);
+  }
 };
 </script>
 
@@ -108,13 +114,14 @@ const updateFavorite = async (value, id) => {
 
     <div
       @click.stop="
-        isFavorite = !isFavorite;
-        updateFavorite(isFavorite, data.id);
+        showFavorite = !showFavorite;
+        updateFavorite(showFavorite, data.id);
+        console.log(showFavorite);
       "
     >
       <HeartIconSolid
         class="size-6 text-red-500 absolute top-4 right-4"
-        v-if="isFavorite"
+        v-if="showFavorite"
       />
       <HeartIconOutline
         class="size-6 text-red-500 absolute top-4 right-4"
