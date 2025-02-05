@@ -79,6 +79,7 @@ const handleSubmit = async () => {
         name: beanData.value.coffeeName,
         roast_date: beanData.value.roastDate,
         total_weight: beanData.value.startingWeight,
+        remainging_weight: beanData.value.startingWeight,
         roast_level: beanData.value.roastLevel,
         process: beanData.value.process,
         flavor_notes: beanData.value.flavorNotes,

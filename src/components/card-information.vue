@@ -13,7 +13,7 @@ import { supabase } from '../lib/supabase-client';
 
 import CardModal from './card-modal.vue';
 
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const showModal = ref(false);
 const showFavorite = ref(data.favorite);
@@ -38,6 +38,16 @@ const updateFavorite = async (value, id) => {
     console.error('Error updating favorite: ', error);
   }
 };
+
+let percentRemaining =
+  (Number(data.remaining_weight) / Number(data.total_weight)) * 100;
+
+watch(
+  () => data.remaining_weight,
+  (newWeight) => {
+    percentRemaining = (Number(newWeight) / Number(data.total_weight)) * 100;
+  }
+);
 </script>
 
 <template>
@@ -57,12 +67,21 @@ const updateFavorite = async (value, id) => {
           class="flex justify-between items-end border-t border-neutral-200 pt-4"
         >
           <h2 class="text-md leading-none">Beans Remaining:</h2>
-          <p class="text-xs leading-none">100g / {{ data.total_weight }}g</p>
+          <p class="text-xs leading-none">
+            {{ data.remaining_weight }}g / {{ data.total_weight }}g
+          </p>
         </div>
 
         <div class="w-full h-3 bg-neutral-700 rounded-lg mt-1">
-          <!-- dynamic style for bar -->
-          <div class="h-3 rounded-lg w-4/5 bg-green-500"></div>
+          <div
+            class="h-3 rounded-lg"
+            :class="{
+              'bg-green-500': percentRemaining >= 50,
+              'bg-yellow-300': percentRemaining >= 20 && percentRemaining < 50,
+              'bg-red-500': percentRemaining < 20,
+            }"
+            :style="{ width: percentRemaining + '%' }"
+          ></div>
         </div>
       </div>
 

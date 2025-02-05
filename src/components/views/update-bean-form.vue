@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 import { supabase } from '../../lib/supabase-client';
 
@@ -12,6 +12,7 @@ const beanData = ref({
   coffeeName: data.name,
   roastDate: data.roast_date,
   startingWeight: data.total_weight,
+  remainingWeight: data.remaining_weight,
   roastLevel: data.roast_level,
   process: data.process,
   flavorNotes: data.flavor_notes,
@@ -52,6 +53,7 @@ const validateForm = () => {
     'coffeeName',
     'roastDate',
     'startingWeight',
+    'remainingWeight',
     'flavorNotes',
     'origin',
     'roastLevel',
@@ -63,6 +65,11 @@ const validateForm = () => {
       errors.value[field] = 'This field is required';
     }
   });
+
+  if (beanData.value.remainingWeight > beanData.value.startingWeight) {
+    errors.value.remainingWeight =
+      "Weight can't be greater than starting weight";
+  }
 
   return Object.keys(errors.value).length === 0;
 };
@@ -79,6 +86,7 @@ const handleUpdate = async (id) => {
           name: beanData.value.coffeeName,
           roast_date: beanData.value.roastDate,
           total_weight: beanData.value.startingWeight,
+          remaining_weight: beanData.value.remainingWeight,
           roast_level: beanData.value.roastLevel,
           process: beanData.value.process,
           flavor_notes: beanData.value.flavorNotes,
@@ -100,6 +108,32 @@ const handleUpdate = async (id) => {
     // Display a toast message with confirmation
   }
 };
+
+watch(
+  () => show,
+  (newVal) => {
+    if (newVal) {
+      beanData.value = {
+        brand: data.brand,
+        coffeeName: data.name,
+        roastDate: data.roast_date,
+        startingWeight: data.total_weight,
+        remainingWeight: data.remaining_weight,
+        roastLevel: data.roast_level,
+        process: data.process,
+        flavorNotes: data.flavor_notes,
+        origin: data.origin,
+        grindSetting: data.grind,
+        brewMethod: data.brew_method,
+        personalNotes: data.personalNotes,
+      };
+
+      errors.value = {};
+
+      submitted.value = false;
+    }
+  }
+);
 </script>
 
 <template>
@@ -160,20 +194,44 @@ const handleUpdate = async (id) => {
               </p>
             </div>
 
-            <div>
-              <label class="text-md font-medium mb-1 text-neutral-700"
-                >Starting Weight (grams) *</label
-              >
-              <input
-                type="number"
-                min="0"
-                class="w-full px-3 py-2 border-2 border-neutral-300 bg-neutral-200 rounded-lg text-neutral-600"
-                :class="{ 'border-red-500': errors.startingWeight }"
-                v-model="beanData.startingWeight"
-              />
-              <p v-if="errors.startingWeight" class="text-red-500 text-sm mt-1">
-                {{ errors.startingWeight }}
-              </p>
+            <div class="flex gap-6">
+              <div>
+                <label class="text-md font-medium mb-1 text-neutral-700"
+                  >Starting Weight (grams) *</label
+                >
+                <input
+                  type="number"
+                  min="0"
+                  class="w-full px-3 py-2 border-2 border-neutral-300 bg-neutral-200 rounded-lg text-neutral-600"
+                  :class="{ 'border-red-500': errors.startingWeight }"
+                  v-model="beanData.startingWeight"
+                />
+                <p
+                  v-if="errors.startingWeight"
+                  class="text-red-500 text-sm mt-1"
+                >
+                  {{ errors.startingWeight }}
+                </p>
+              </div>
+
+              <div>
+                <label class="text-md font-medium mb-1 text-neutral-700"
+                  >Remaining Weight (grams) *</label
+                >
+                <input
+                  type="number"
+                  min="0"
+                  class="w-full px-3 py-2 border-2 border-neutral-300 bg-neutral-200 rounded-lg text-neutral-600"
+                  :class="{ 'border-red-500': errors.remainingWeight }"
+                  v-model="beanData.remainingWeight"
+                />
+                <p
+                  v-if="errors.remainingWeight"
+                  class="text-red-500 text-sm mt-1"
+                >
+                  {{ errors.remainingWeight }}
+                </p>
+              </div>
             </div>
 
             <div>
