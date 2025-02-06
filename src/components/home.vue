@@ -4,6 +4,7 @@ import { ref, watch } from 'vue';
 import AddNewBtn from './add-new-btn.vue';
 import Card from './views/card.vue';
 import Filter from './views/filter.vue';
+import MakeCoffeeBtn from './make-coffee-btn.vue';
 
 const activeTab = ref('all');
 
@@ -14,6 +15,7 @@ const handleActiveTab = (tab) => {
 
 <template>
   <div class="flex flex-col gap-20 w-screen items-center">
+    <MakeCoffeeBtn />
     <Filter @update:activeTab="handleActiveTab" />
     <Card :tab="activeTab" />
     <AddNewBtn />

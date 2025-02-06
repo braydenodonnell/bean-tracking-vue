@@ -47,6 +47,13 @@ const submitted = ref(false);
 
 const errors = ref({});
 
+const checkData = async (brand) => {
+  const { data, error } = await supabase
+    .from('coffee_beans')
+    .select('brand')
+    .eq('brand', brand);
+};
+
 const validateForm = () => {
   errors.value = {};
   const requiredFields = [
@@ -73,27 +80,24 @@ const handleSubmit = async () => {
   if (validateForm()) {
     submitted.value = true;
 
-    const { error } = await supabase.from('coffee_beans').insert([
-      {
-        brand: beanData.value.brand,
-        name: beanData.value.coffeeName,
-        roast_date: beanData.value.roastDate,
-        total_weight: beanData.value.startingWeight,
-        remainging_weight: beanData.value.startingWeight,
-        roast_level: beanData.value.roastLevel,
-        process: beanData.value.process,
-        flavor_notes: beanData.value.flavorNotes,
-        origin: beanData.value.origin,
-        grind: beanData.value.grindSetting,
-        brew_method: beanData.value.brewMethod,
-        personal_notes: beanData.value.personalNotes,
-      },
-    ]);
+    const { error } = await supabase.from('coffee_beans').insert({
+      brand: beanData.value.brand,
+      name: beanData.value.coffeeName,
+      roast_date: beanData.value.roastDate,
+      total_weight: beanData.value.startingWeight,
+      remaining_weight: beanData.value.startingWeight,
+      roast_level: beanData.value.roastLevel,
+      process: beanData.value.process,
+      flavor_notes: beanData.value.flavorNotes,
+      origin: beanData.value.origin,
+      grind: beanData.value.grindSetting,
+      brew_method: beanData.value.brewMethod,
+      personal_notes: beanData.value.personalNotes,
+    });
 
     if (error) {
       console.error('Error inserting data: ', error);
     } else {
-      console.log('Data insertting successfully!');
       // Close form
       emit('close');
 
