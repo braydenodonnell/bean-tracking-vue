@@ -47,13 +47,6 @@ const submitted = ref(false);
 
 const errors = ref({});
 
-const checkData = async (brand) => {
-  const { data, error } = await supabase
-    .from('coffee_beans')
-    .select('brand')
-    .eq('brand', brand);
-};
-
 const validateForm = () => {
   errors.value = {};
   const requiredFields = [
@@ -80,29 +73,81 @@ const handleSubmit = async () => {
   if (validateForm()) {
     submitted.value = true;
 
-    const { error } = await supabase.from('coffee_beans').insert({
-      brand: beanData.value.brand,
-      name: beanData.value.coffeeName,
-      roast_date: beanData.value.roastDate,
-      total_weight: beanData.value.startingWeight,
-      remaining_weight: beanData.value.startingWeight,
-      roast_level: beanData.value.roastLevel,
-      process: beanData.value.process,
-      flavor_notes: beanData.value.flavorNotes,
-      origin: beanData.value.origin,
-      grind: beanData.value.grindSetting,
-      brew_method: beanData.value.brewMethod,
-      personal_notes: beanData.value.personalNotes,
-    });
+    // Check if a row with the same brand and name exists
+    const { data, error: fetchError } = await supabase
+      .from('coffee_beans')
+      .select('*')
+      .eq('brand', beanData.value.brand)
+      .eq('name', beanData.value.coffeeName);
 
-    if (error) {
-      console.error('Error inserting data: ', error);
-    } else {
-      // Close form
-      emit('close');
-
-      // Display a toast message with confirmation
+    if (fetchError) {
+      console.error('Error fetching data:', fetchError);
+      return;
     }
+
+    if (data.length > 0) {
+      // Row exists, prompt the user
+      const userChoice = confirm(
+        'A coffee bean with the same brand and name already exists. Do you want to overwrite it? Click "OK" to overwrite, or "Cancel" to create a new entry.'
+      );
+
+      if (userChoice) {
+        // Overwrite (update existing row)
+        const { error: updateError } = await supabase
+          .from('coffee_beans')
+          .update({
+            roast_date: beanData.value.roastDate,
+            total_weight: beanData.value.startingWeight,
+            remaining_weight: beanData.value.startingWeight,
+            roast_level: beanData.value.roastLevel,
+            process: beanData.value.process,
+            flavor_notes: beanData.value.flavorNotes,
+            origin: beanData.value.origin,
+            grind: beanData.value.grindSetting,
+            brew_method: beanData.value.brewMethod,
+            personal_notes: beanData.value.personalNotes,
+          })
+          .eq('brand', beanData.value.brand)
+          .eq('name', beanData.value.coffeeName);
+
+        if (updateError) {
+          console.error('Error updating data:', updateError);
+        } else {
+          emit('close');
+          // Show a success message
+        }
+      } else {
+        // Create a new entry
+        insertNewEntry();
+      }
+    } else {
+      // No existing record, insert a new entry
+      insertNewEntry();
+    }
+  }
+};
+
+const insertNewEntry = async () => {
+  const { error } = await supabase.from('coffee_beans').insert({
+    brand: beanData.value.brand,
+    name: beanData.value.coffeeName,
+    roast_date: beanData.value.roastDate,
+    total_weight: beanData.value.startingWeight,
+    remaining_weight: beanData.value.startingWeight,
+    roast_level: beanData.value.roastLevel,
+    process: beanData.value.process,
+    flavor_notes: beanData.value.flavorNotes,
+    origin: beanData.value.origin,
+    grind: beanData.value.grindSetting,
+    brew_method: beanData.value.brewMethod,
+    personal_notes: beanData.value.personalNotes,
+  });
+
+  if (error) {
+    console.error('Error inserting data: ', error);
+  } else {
+    emit('close');
+    // Show a success message
   }
 };
 
@@ -141,7 +186,7 @@ watch(
     >
       <div
         @click.stop
-        class="bg-neutral-100 border border-neutral-200 h-screen rounded-lg shadow-md p-8 w-[40rem] overflow-y-scroll cursor-default overscroll-contain"
+        class="bg-neutral-100 border border-neutral-200 h-screen rounded-lg shadow-md p-8 w-[30rem] overflow-y-scroll cursor-default overscroll-contain"
       >
         <form @submit.prevent="handleSubmit">
           <div class="flex flex-col gap-6">

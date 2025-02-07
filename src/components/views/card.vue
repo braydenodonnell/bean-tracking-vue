@@ -71,7 +71,7 @@ watchEffect(() => {
 <template>
   <div
     v-if="beanData.length > 0"
-    class="grid grid-cols-1 gap-12 mb-16 sm:grid-cols-2"
+    class="grid grid-cols-1 gap-12 mb-16"
     :class="{
       'lg:grid-cols-3': beanData.length >= 3,
       'lg:grid-cols-2': beanData.length === 2,
