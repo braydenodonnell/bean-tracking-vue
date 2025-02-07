@@ -91,7 +91,7 @@ const deleteBeanData = async (id) => {
           </div>
         </div>
 
-        <div className="mt-10 flex justify-between">
+        <div class="mt-10 flex justify-between">
           <button
             :disabled="showConfirmDelete"
             @click.stop="showConfirmDelete = true"

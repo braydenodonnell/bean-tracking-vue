@@ -18,7 +18,7 @@ const handleTab = (tab) => {
 </script>
 
 <template>
-  <nav class="flex gap-4 mt-16">
+  <nav class="flex gap-4">
     <button
       v-for="tab in tabs"
       :key="tab.id"

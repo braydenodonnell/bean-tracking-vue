@@ -10,7 +10,7 @@ const showMakeCoffee = ref(false);
 
 <template>
   <button
-    className="absolute top-6 left-6 flex gap-2 capitalize bg-yellow-800 hover:bg-yellow-900 rounded-full items-center py-2 px-4 text-neutral-50 text-lg shadow-md transition cursor-pointer"
+    class="absolute top-6 left-6 flex gap-2 capitalize bg-yellow-800 hover:bg-yellow-900 rounded-full items-center py-2 px-4 text-neutral-50 text-lg shadow-md transition cursor-pointer"
     @click="showMakeCoffee = true"
   >
     <PlusIcon class="size-5" />

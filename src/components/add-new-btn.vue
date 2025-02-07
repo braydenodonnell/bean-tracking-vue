@@ -8,7 +8,7 @@ const showInputField = ref(false);
 
 <template>
   <button
-    className="absolute top-6 right-6 flex gap-2 capitalize bg-green-500 hover:bg-green-600 rounded-full items-center py-2 px-4 text-neutral-50 text-lg shadow-md transition cursor-pointer"
+    class="absolute top-6 right-6 flex gap-2 capitalize bg-green-500 hover:bg-green-600 rounded-full items-center py-2 px-4 text-neutral-50 text-lg shadow-md transition cursor-pointer"
     @click="showInputField = true"
   >
     <PlusIcon class="size-5" />

@@ -135,7 +135,7 @@ watch(
                   makeCoffee(selectedCoffee.id, gramsUsed);
                   if (!inputError) $emit('close');
                 "
-                className="px-4 py-2 rounded-lg text-lg bg-green-500 text-neutral-50 font-medium h-12 text-center shadow-md cursor-pointer hover:shadow-none hover:bg-green-600 transition duration-200"
+                class="px-4 py-2 rounded-lg text-lg bg-green-500 text-neutral-50 font-medium h-12 text-center shadow-md cursor-pointer hover:shadow-none hover:bg-green-600 transition duration-200"
               >
                 Make Coffee
               </button>
