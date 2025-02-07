@@ -95,7 +95,7 @@ watch(
             <FireIcon class="size-5 text-neutral-700" />
             <h3 class="font-semibold text-neutral-700">Roast</h3>
           </div>
-          <p class="text-neutral-600 caapitalize">{{ data.roast_level }}</p>
+          <p class="text-neutral-600 capitalize">{{ data.roast_level }}</p>
         </div>
 
         <div class="space-y-1 col-span-3">
@@ -103,7 +103,7 @@ watch(
             <ArrowsRightLeftIcon class="size-5 text-neutral-700" />
             <h3 class="font-semibold text-neutral-700">Process</h3>
           </div>
-          <p class="text-neutral-600 caapitalize">{{ data.process }}</p>
+          <p class="text-neutral-600 capitalize">{{ data.process }}</p>
         </div>
 
         <div class="space-y-1 col-span-3">

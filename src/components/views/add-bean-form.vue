@@ -44,6 +44,8 @@ const brewMethods = [
 ];
 
 const submitted = ref(false);
+const showUserChoice = ref(false);
+const userChoice = ref(undefined);
 
 const errors = ref({});
 
@@ -70,6 +72,8 @@ const validateForm = () => {
 };
 
 const handleSubmit = async () => {
+  userChoice.value = undefined;
+
   if (validateForm()) {
     submitted.value = true;
 
@@ -77,69 +81,82 @@ const handleSubmit = async () => {
     const { data, error: fetchError } = await supabase
       .from('coffee_beans')
       .select('*')
-      .eq('brand', beanData.value.brand)
-      .eq('name', beanData.value.coffeeName);
+      .eq('brand', beanData.value.brand.toLowerCase())
+      .eq('name', beanData.value.coffeeName.toLowerCase());
 
     if (fetchError) {
       console.error('Error fetching data:', fetchError);
       return;
     }
 
+    // Brand and name already exist
     if (data.length > 0) {
-      // Row exists, prompt the user
-      const userChoice = confirm(
-        'A coffee bean with the same brand and name already exists. Do you want to overwrite it? Click "OK" to overwrite, or "Cancel" to create a new entry.'
-      );
+      showUserChoice.value = true;
 
-      if (userChoice) {
-        // Overwrite (update existing row)
+      const userConfirmation = await waitForUserChoice();
+
+      if (userConfirmation && userChoice.value) {
+        console.log(userConfirmation);
+        console.log(userChoice.value);
+
+        // Overwrite
         const { error: updateError } = await supabase
           .from('coffee_beans')
           .update({
             roast_date: beanData.value.roastDate,
             total_weight: beanData.value.startingWeight,
             remaining_weight: beanData.value.startingWeight,
-            roast_level: beanData.value.roastLevel,
-            process: beanData.value.process,
-            flavor_notes: beanData.value.flavorNotes,
-            origin: beanData.value.origin,
+            roast_level: beanData.value.roastLevel.toLowerCase(),
+            process: beanData.value.process.toLowerCase(),
+            flavor_notes: beanData.value.flavorNotes.toLowerCase(),
+            origin: beanData.value.origin.toLowerCase(),
             grind: beanData.value.grindSetting,
-            brew_method: beanData.value.brewMethod,
+            brew_method: beanData.value.brewMethod.toLowerCase(),
             personal_notes: beanData.value.personalNotes,
           })
-          .eq('brand', beanData.value.brand)
-          .eq('name', beanData.value.coffeeName);
+          .eq('brand', beanData.value.brand.toLowerCase())
+          .eq('name', beanData.value.coffeeName.toLowerCase());
 
         if (updateError) {
           console.error('Error updating data:', updateError);
         } else {
           emit('close');
-          // Show a success message
         }
       } else {
-        // Create a new entry
+        // New entry
         insertNewEntry();
       }
     } else {
-      // No existing record, insert a new entry
       insertNewEntry();
     }
   }
 };
 
+// Function to wait for the user's choice in the modal
+const waitForUserChoice = () => {
+  return new Promise((resolve) => {
+    const interval = setInterval(() => {
+      if (userChoice.value !== undefined) {
+        clearInterval(interval);
+        resolve(userChoice);
+      }
+    }, 100);
+  });
+};
+
 const insertNewEntry = async () => {
   const { error } = await supabase.from('coffee_beans').insert({
-    brand: beanData.value.brand,
-    name: beanData.value.coffeeName,
+    brand: beanData.value.brand.toLowerCase(),
+    name: beanData.value.coffeeName.toLowerCase(),
     roast_date: beanData.value.roastDate,
     total_weight: beanData.value.startingWeight,
     remaining_weight: beanData.value.startingWeight,
-    roast_level: beanData.value.roastLevel,
-    process: beanData.value.process,
-    flavor_notes: beanData.value.flavorNotes,
-    origin: beanData.value.origin,
+    roast_level: beanData.value.roastLevel.toLowerCase(),
+    process: beanData.value.process.toLowerCase(),
+    flavor_notes: beanData.value.flavorNotes.toLowerCase(),
+    origin: beanData.value.origin.toLowerCase(),
     grind: beanData.value.grindSetting,
-    brew_method: beanData.value.brewMethod,
+    brew_method: beanData.value.brewMethod.toLowerCase(),
     personal_notes: beanData.value.personalNotes,
   });
 
@@ -159,11 +176,11 @@ watch(
         brand: '',
         coffeeName: '',
         roastDate: '',
-        startingWeight: '',
-        roastLevel: '',
-        process: '',
-        flavorNotes: '',
-        origin: '',
+        startingWeight: '123',
+        roastLevel: 'Medium',
+        process: 'Washed',
+        flavorNotes: 'Chocolate, Caramel',
+        origin: 'Kenya',
         grindSetting: '',
         brewMethod: '',
         personalNotes: '',
@@ -172,6 +189,8 @@ watch(
       errors.value = {};
 
       submitted.value = false;
+
+      showUserChoice.value = false;
     }
   }
 );
@@ -182,11 +201,11 @@ watch(
     <div
       v-if="show"
       @click="$emit('close')"
-      class="fixed overflow-hidden inset-0 bg-black/50 z-50 flex justify-end items-center cursor-default transition-opacity duration-300 ease"
+      class="fixed overflow-hidden inset-0 bg-black/50 z-50 flex flex-col justify-end items-end cursor-default transition-opacity duration-300 ease"
     >
       <div
         @click.stop
-        class="bg-neutral-100 border border-neutral-200 h-screen rounded-lg shadow-md p-8 w-[30rem] overflow-y-scroll cursor-default overscroll-contain"
+        class="bg-neutral-100 border border-neutral-200 rounded-lg shadow-md p-8 w-[30rem] overflow-y-scroll cursor-default overscroll-contain"
       >
         <form @submit.prevent="handleSubmit">
           <div class="flex flex-col gap-6">
@@ -376,14 +395,14 @@ watch(
             <div class="col-span-2 flex justify-between">
               <button
                 @click="$emit('close')"
-                className="px-4 py-2 rounded-lg text-lg bg-red-500 text-neutral-50 font-medium w-28 h-12 text-center shadow-md cursor-pointer hover:shadow-none hover:bg-red-600 transition duration-200"
+                class="px-4 py-2 rounded-lg text-lg bg-red-500 text-neutral-50 font-medium w-28 h-12 text-center shadow-md cursor-pointer hover:shadow-none hover:bg-red-600 transition duration-200"
               >
                 Cancel
               </button>
 
               <button
                 type="submit"
-                className="px-4 py-2 rounded-lg text-lg bg-green-500 text-neutral-50 font-medium h-12 text-center shadow-md cursor-pointer hover:shadow-none hover:bg-green-600 transition duration-200"
+                class="px-4 py-2 rounded-lg text-lg bg-green-500 text-neutral-50 font-medium h-12 text-center shadow-md cursor-pointer hover:shadow-none hover:bg-green-600 transition duration-200"
               >
                 Add Coffee
               </button>
@@ -391,6 +410,42 @@ watch(
           </div>
         </form>
       </div>
+
+      <Transition name="modal">
+        <div
+          v-if="showUserChoice"
+          class="fixed inset-0 z-50 flex justify-center mt-12 h-fit cursor-default transition-opacity duration-900 ease"
+        >
+          <div class="flex flex-col gap-6 bg-neutral-100 p-6 w-96 rounded-lg">
+            <div class="text-lg">
+              A coffee bean with the same brand and name already exists. Do you
+              want to overwrite it or make a new entry
+            </div>
+
+            <div class="col-span-2 flex justify-between">
+              <button
+                @click.stop="
+                  userChoice = true;
+                  showUserChoice = false;
+                "
+                class="px-4 py-2 rounded-lg text-lg bg-red-500 text-neutral-50 font-medium w-28 h-12 text-center shadow-md cursor-pointer hover:shadow-none hover:bg-red-600 transition duration-200"
+              >
+                Overwrite
+              </button>
+
+              <button
+                @click.stop="
+                  userChoice = false;
+                  showUserChoice = false;
+                "
+                class="px-4 py-2 rounded-lg text-lg bg-green-500 text-neutral-50 font-medium h-12 text-center shadow-md cursor-pointer hover:shadow-none hover:bg-green-600 transition duration-200"
+              >
+                New Entry
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
     </div>
   </Transition>
 </template>
