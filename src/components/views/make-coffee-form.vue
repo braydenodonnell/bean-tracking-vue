@@ -8,6 +8,7 @@ import { HeartIcon as HeartIconSolid } from '@heroicons/vue/24/solid';
 const { show } = defineProps(['show']);
 
 const makeCoffeeForm = ref(false);
+const inputError = ref(false);
 const selectedCoffee = ref();
 const gramsUsed = ref();
 
@@ -24,6 +25,8 @@ const fetchData = async () => {
 };
 
 const makeCoffee = async (id, weight) => {
+  inputError.value = false;
+
   const { data, error } = await supabase
     .from('coffee_beans')
     .select('remaining_weight')
@@ -35,12 +38,19 @@ const makeCoffee = async (id, weight) => {
     return;
   }
 
+  if (!gramsUsed.value && gramsUsed !== 0) {
+    inputError.value = true;
+    return;
+  }
+
   const updatedRemainingWeight = data.remaining_weight - weight;
 
   await supabase
     .from('coffee_beans')
     .update({ remaining_weight: updatedRemainingWeight })
     .eq('id', id);
+
+  $emit('close');
 };
 
 onMounted(() => fetchData());
@@ -48,6 +58,7 @@ onMounted(() => fetchData());
 watch(
   () => show,
   () => {
+    makeCoffeeForm.value = false;
     fetchData();
   }
 );
@@ -107,20 +118,22 @@ watch(
                 >Grams used</label
               >
               <input
-                type="text"
+                type="num"
+                min="0"
                 class="w-full px-3 py-2 border-2 border-neutral-300 bg-neutral-200 rounded-lg text-neutral-600"
+                :class="{ 'border-red-500': inputError }"
                 v-model="gramsUsed"
               />
-              <!-- <p v-if="errors.brand" class="text-red-500 text-sm mt-1">
-                {{ errors.brand }}
-              </p> -->
+              <p v-if="inputError" class="text-red-500 text-sm mt-1">
+                This field is required
+              </p>
             </div>
 
             <div class="flex justify-center mt-4">
               <button
                 @click="
                   makeCoffee(selectedCoffee.id, gramsUsed);
-                  $emit('close');
+                  if (!inputError) $emit('close');
                 "
                 className="px-4 py-2 rounded-lg text-lg bg-green-500 text-neutral-50 font-medium h-12 text-center shadow-md cursor-pointer hover:shadow-none hover:bg-green-600 transition duration-200"
               >
