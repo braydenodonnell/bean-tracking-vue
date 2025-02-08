@@ -7,8 +7,11 @@ import { HeartIcon as HeartIconSolid } from '@heroicons/vue/24/solid';
 
 const { show } = defineProps(['show']);
 
+const emit = defineEmits('close');
+
 const makeCoffeeForm = ref(false);
 const inputError = ref(false);
+const inputErrorMsg = ref('');
 const selectedCoffee = ref();
 const gramsUsed = ref();
 
@@ -19,12 +22,14 @@ const fetchData = async () => {
     .from('coffee_beans')
     .select('brand, name, remaining_weight, id, favorite')
     .gt('remaining_weight', 20)
+    .order('favorite', { ascending: false })
     .order('remaining_weight', { ascending: true });
 
   return (beanData.value = data);
 };
 
 const makeCoffee = async (id, weight) => {
+  console.log(gramsUsed);
   inputError.value = false;
 
   const { data, error } = await supabase
@@ -40,6 +45,13 @@ const makeCoffee = async (id, weight) => {
 
   if (!gramsUsed.value && gramsUsed !== 0) {
     inputError.value = true;
+    inputErrorMsg.value = 'This field is required';
+    return;
+  }
+
+  if (gramsUsed.value > data.remaining_weight) {
+    inputError.value = true;
+    inputErrorMsg.value = 'Not enough beans to make coffee';
     return;
   }
 
@@ -50,7 +62,7 @@ const makeCoffee = async (id, weight) => {
     .update({ remaining_weight: updatedRemainingWeight })
     .eq('id', id);
 
-  $emit('close');
+  emit('close');
 };
 
 onMounted(() => fetchData());
@@ -59,6 +71,8 @@ watch(
   () => show,
   () => {
     makeCoffeeForm.value = false;
+    inputError.value = false;
+    gramsUsed.value = null;
     fetchData();
   }
 );
@@ -88,9 +102,9 @@ watch(
             <div
               class="bg-neutral-100 cursor-pointer border border-neutral-200 rounded-lg shadow-md p-3 transition-transform duration-300 hover:shadow-lg relative"
             >
-              <h3 class="text-lg">{{ bean.brand }}</h3>
-              <p>{{ bean.name }}</p>
-              <p>{{ bean.remaining_weight }}g remaining</p>
+              <h3 class="text-lg capitalize">{{ bean.brand }}</h3>
+              <p class="capitalize">{{ bean.name }}</p>
+              <p class="capitalize">{{ bean.remaining_weight }}g remaining</p>
               <HeartIconSolid
                 class="size-6 text-red-500 absolute top-2 right-2"
                 v-if="bean.favorite"
@@ -108,9 +122,11 @@ watch(
         >
           <div>
             <div class="flex flex-col items-center gap-1">
-              <h3 class="text-2xl">{{ selectedCoffee.brand }}</h3>
-              <p>{{ selectedCoffee.name }}</p>
-              <p>{{ selectedCoffee.remaining_weight }}g remaining</p>
+              <h3 class="text-2xl capitalize">{{ selectedCoffee.brand }}</h3>
+              <p class="capitalize">{{ selectedCoffee.name }}</p>
+              <p class="capitalize">
+                {{ selectedCoffee.remaining_weight }}g remaining
+              </p>
             </div>
 
             <div class="mt-4">
@@ -118,23 +134,20 @@ watch(
                 >Grams used</label
               >
               <input
-                type="num"
+                type="number"
                 min="0"
                 class="w-full px-3 py-2 border-2 border-neutral-300 bg-neutral-200 rounded-lg text-neutral-600"
                 :class="{ 'border-red-500': inputError }"
                 v-model="gramsUsed"
               />
               <p v-if="inputError" class="text-red-500 text-sm mt-1">
-                This field is required
+                {{ inputErrorMsg }}
               </p>
             </div>
 
             <div class="flex justify-center mt-4">
               <button
-                @click="
-                  makeCoffee(selectedCoffee.id, gramsUsed);
-                  if (!inputError) $emit('close');
-                "
+                @click="makeCoffee(selectedCoffee.id, gramsUsed)"
                 class="px-4 py-2 rounded-lg text-lg bg-green-500 text-neutral-50 font-medium h-12 text-center shadow-md cursor-pointer hover:shadow-none hover:bg-green-600 transition duration-200"
               >
                 Make Coffee

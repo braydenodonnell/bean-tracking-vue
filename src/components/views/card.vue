@@ -11,7 +11,6 @@ const loading = ref(false);
 const { tab, searchQuery } = defineProps(['tab', 'searchQuery']);
 
 async function fetchData() {
-  // all: all the coffee bean entries in supabase
   if (tab === 'all') {
     const { data, error } = await supabase
       .from('coffee_beans')
@@ -26,28 +25,22 @@ async function fetchData() {
     }
   }
 
-  // current: coffee beans that meet a minimum requirement of bean weight
   if (tab === 'current') {
-    loading.true;
-
     const { data, error } = await supabase
       .from('coffee_beans')
       .select()
-      .gt('remaining_weight', 0)
+      .gt('remaining_weight', 10)
       .order('time_created', { ascending: false });
 
     if (error) {
       console.log('Error fetching: ', error);
     } else {
-      loading.value = false;
+      console.log(data);
       return (beanData.value = data);
     }
   }
 
-  // favorite: coffee beans that are favorited
   if (tab === 'favorites') {
-    loading.value = true;
-
     const { data, error } = await supabase
       .from('coffee_beans')
       .select()

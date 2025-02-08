@@ -7,7 +7,7 @@ import Filter from './views/filter.vue';
 import MakeCoffeeBtn from './make-coffee-btn.vue';
 import SearchBar from './search-bar.vue';
 
-const activeTab = ref('all');
+const activeTab = ref('current');
 const handleActiveTab = (tab) => {
   activeTab.value = tab;
 };
