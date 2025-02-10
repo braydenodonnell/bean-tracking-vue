@@ -22,8 +22,8 @@ const handleSearchInput = (value) => {
   <div class="flex flex-col gap-12 w-screen items-center">
     <MakeCoffeeBtn />
     <SearchBar @update-search="handleSearchInput" />
+    <AddNewBtn />
     <Filter @update:activeTab="handleActiveTab" />
     <Card :tab="activeTab" :searchQuery="searchQuery" />
-    <AddNewBtn />
   </div>
 </template>

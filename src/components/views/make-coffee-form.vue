@@ -87,7 +87,8 @@ watch(
     >
       <div
         @click.stop="makeCoffeeForm = false"
-        class="bg-neutral-100 border border-neutral-200 h-screen shadow-xl z-20 p-8 w-[20rem] overflow-y-scroll cursor-default overscroll-contain"
+        class="bg-neutral-100 border rounded-r-lg border-neutral-200 h-screen shadow-xl z-20 p-8 w-[20rem] overflow-y-scroll cursor-default overscroll-contain"
+        :class="{ 'rounded-r-none': makeCoffeeForm }"
       >
         <h2 class="text-xl font-semibold mb-6">Select coffee to make</h2>
 

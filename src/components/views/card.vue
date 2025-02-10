@@ -98,7 +98,7 @@ const filteredData = computed(() => {
 <template>
   <div
     v-if="filteredData.length"
-    class="grid grid-cols-1 gap-12 mb-16"
+    class="grid grid-cols-1 gap-12 mb-16 md:grid-cols-2"
     :class="{
       'lg:grid-cols-3': filteredData.length >= 3,
       'lg:grid-cols-2': filteredData.length === 2,

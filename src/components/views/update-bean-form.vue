@@ -144,7 +144,7 @@ watch(
     >
       <div
         @click.stop
-        class="bg-neutral-100 border border-neutral-200 h-screen rounded-lg shadow-md p-8 w-[40rem] overflow-y-scroll cursor-default overscroll-contain"
+        class="bg-neutral-100 border border-neutral-200 h-screen rounded-lg shadow-md p-8 w-[30rem] overflow-y-scroll cursor-default overscroll-contain"
       >
         <form @submit.prevent="handleUpdate(data.id)">
           <div class="flex flex-col gap-6">
@@ -194,7 +194,7 @@ watch(
               </p>
             </div>
 
-            <div class="flex gap-6">
+            <div class="flex gap-4">
               <div>
                 <label class="text-md font-medium mb-1 text-neutral-700"
                   >Starting Weight (grams) *</label
@@ -218,9 +218,9 @@ watch(
                 <label class="text-md font-medium mb-1 text-neutral-700"
                   >Remaining Weight (grams) *</label
                 >
-                <!-- min="0" -->
                 <input
                   type="number"
+                  min="0"
                   class="w-full px-3 py-2 border-2 border-neutral-300 bg-neutral-200 rounded-lg text-neutral-600"
                   :class="{ 'border-red-500': errors.remainingWeight }"
                   v-model="beanData.remainingWeight"

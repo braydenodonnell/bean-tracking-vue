@@ -52,7 +52,7 @@ watch(
 
 <template>
   <div
-    class="bg-neutral-100 fixed cursor-pointer border border-neutral-200 rounded-lg shadow-md p-6 w-80 h-[420px] relative transition-transform duration-300 hover:shadow-lg"
+    class="bg-neutral-100 cursor-pointer border border-neutral-200 rounded-lg shadow-md p-6 w-80 h-[420px] relative transition-transform duration-300 hover:shadow-lg"
     @click="showModal = true"
   >
     <div class="flex flex-col space-y-4">
